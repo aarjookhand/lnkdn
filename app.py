@@ -1,49 +1,47 @@
 from flask import *
 import sqlite3
 from pymongo import MongoClient
-from flask_sqlalchemy import SQLAlchemy
 from gridfs import GridFS
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from bson import ObjectId
-from flask_caching import Cache 
-from bson import Decimal128
-from decimal import Decimal
-from bson.decimal128 import Decimal128
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import flash, redirect, url_for
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 
 import os
-
-if not os.path.exists('uploads'):
-    os.makedirs('uploads')
 
 
 
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
+
+MONGODB_URI = os.environ.get("MONGODB_URI")
+MONGODB_DB = os.environ.get("MONGODB_DB")
+SQLITE_URI = os.environ.get('SQLITE_URI', 'lnkdn.db')
 
 
 
 
-client = MongoClient("mongodb://localhost:27017")
-db = client['lnkdn']
+# conn to MongoDB
+client = MongoClient(MONGODB_URI)
+db = client[MONGODB_DB]
+
+# define collections
 collection = db['jobs']
 applicant_collection = db['applicants']
 users_collection = db['users']
 ALLOWED_EXTENSIONS = {'pdf'}
-
-
-
-
 
 
 fs = GridFS(db)
@@ -54,7 +52,7 @@ try:
 except Exception as e:
     print(e)
 
-conn = sqlite3.connect('lnkdn.db')
+conn = sqlite3.connect(SQLITE_URI)
 cursor = conn.cursor()
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS users
@@ -97,7 +95,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = sqlite3.connect('lnkdn.db')
+    conn = sqlite3.connect(SQLITE_URI)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE email = ?", (user_id,))
     user_data = cursor.fetchone()
@@ -125,7 +123,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, field):
-        conn = sqlite3.connect('lnkdn.db')
+        conn = sqlite3.connect(SQLITE_URI)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (field.data,))
         existing_user = cursor.fetchone()
@@ -136,7 +134,7 @@ class RegistrationForm(FlaskForm):
 
 
     def validate_email(self, field):
-        conn = sqlite3.connect('lnkdn.db')
+        conn = sqlite3.connect(SQLITE_URI)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE email = ?", (field.data,))
         existing_user = cursor.fetchone()
@@ -148,7 +146,7 @@ class RegistrationForm(FlaskForm):
 
 
 
-conn_sqlite = sqlite3.connect('lnkdn.db')
+conn_sqlite = sqlite3.connect(SQLITE_URI)
 cursor = conn_sqlite.cursor()
 cursor.execute("SELECT * FROM users WHERE username = 'admin'")
 admin_user_sqlite = cursor.fetchone()
@@ -185,7 +183,7 @@ def register():
         email = form.email.data
         password = form.password.data
    
-        conn = sqlite3.connect('lnkdn.db')
+        conn = sqlite3.connect(SQLITE_URI)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         existing_user = cursor.fetchone()
@@ -221,7 +219,7 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        conn = sqlite3.connect('lnkdn.db')
+        conn = sqlite3.connect(SQLITE_URI)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
         user_data = cursor.fetchone()
@@ -257,13 +255,15 @@ def post_jobs():
         job_type = request.form.get('job_type')
         company_name = request.form.get('company_name')
         location = request.form.get('location')
+        requirements = request.form.get('requirements')
 
         jobs = {
             "job_title": job_title,
             "job_description": job_description,
             "job_type" : job_type,
             "company_name" : company_name,
-            "location" : location
+            "location" : location,
+            "requirements" : requirements
         }
         collection.insert_one(jobs)
         flash('Job posted successfully')
@@ -349,7 +349,6 @@ def apply(job_id):
 
 @app.route('/logout', methods=['GET'])
 def logout():
-    # Clear the user session to log the user out
     session.pop('user_id', None)
     return redirect(url_for('display_welcome'))
 
