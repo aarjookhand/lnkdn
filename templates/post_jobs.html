@@ -79,7 +79,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         input[type="submit"]:hover {
-            background-color: #c670b77a; 
+            border: 2px solid #000000; 
             color: #000000; 
         }
 
@@ -90,7 +90,7 @@
         }
 
         a:hover {
-            color: #c670b8;
+            color: #000000;
         }
     </style>
 </head>
@@ -105,12 +105,17 @@
         <textarea id="job_description" name="job_description" required></textarea>
         <br>
 
+        
         <label for="job_type">Job Type:</label>
         <select id="job_type" name="job_type" required>
             <option value="Remote">Remote</option>
             <option value="Onsite">Onsite</option>
             <option value="Hybrid">Hybrid</option>
         </select>
+        <br>
+
+        <label for="requirements">Job requirements:</label>
+        <textarea id="requirements" name="requirements" required></textarea>
         <br>
 
         <label for="company_name">Company Name:</label>
