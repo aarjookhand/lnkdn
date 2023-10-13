@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>filtered Job Listings</title>
+    <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #000000;
+        font-size: 2.5rem;
+        margin-top: 50px;
+    }
+
+    a.back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f5f5f5;
+        color: #000000;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        border: 2px solid #c670b77a;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    a.back-button:hover {
+        background-color: #c670b77a;
+        color: #000000;
+    }
+
+    .job-search {
+        margin: 20px 0;
+    }
+
+    .job-search input[type="text"] {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 60%;
+        margin-right: 10px;
+    }
+
+    .job-search input[type="submit"] {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f5f5f5; 
+        color: #000000; 
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        border: 2px solid #c670b77a; 
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .job-search input[type="submit"]:hover {
+        background-color: #c670b77a; 
+        color: #000000; 
+    }
+
+
+    .job-list {
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-card {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+
+    .job-card h2 {
+        color: #000000;
+        font-size: 1.5rem;
+    }
+
+    .job-card p {
+        color: #555;
+        font-size: 1.2rem;
+    }
+
+    .job-card a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f5f5f5; 
+        color: #000000; 
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        border: 2px solid #c670b77a; 
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .job-card a:hover {
+        background-color: #c670b77a; 
+        color: #000000; 
+    }
+
+</style>
+<body>
+    <h1>welcome, apply now </h1>
+    <a href="{{ url_for('job_list') }}" class="back-button">Back to Job List</a>
+    
+    <div class="job-search">
+        <form action="{{ url_for('search_jobs') }}" method="GET">
+            <input type="text" name="search_query" placeholder="Search by title, company, or location">
+            <input type="submit" value="Search">
+        </form>
+    </div>
+
+    <div class="job-list">
+
+
+        {% for job in jobs %}
+            <div class="job-card">
+                <h2>{{ job.job_title }}</h2>
+                <p>- {{ job.company_name }}</p>
+                <p>- {{ job.location }}</p>
+                <p>- {{ job._id }}</p>
+                <a href="{{ url_for('job_details', job_id=job._id) }}">Details</a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

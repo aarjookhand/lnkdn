@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post a Job</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #555;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        p {
+            color: #555;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            border-radius: 5px;
+            
+            color: #000;
+            font-size: 1rem;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc; 
+            border-radius: 5px;
+            font-size: 1.2rem;
+            box-sizing: border-box; 
+        }
+        textarea {
+            height: 100px; 
+            resize: vertical; 
+            overflow-y: auto; 
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc; 
+            border-radius: 5px;
+            font-size: 1.2rem;
+            box-sizing: border-box; 
+        }
+        
+
+        input[type="submit"] {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f5f5f5; 
+            color: #000000; 
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            border: 2px solid #c670b77a; 
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #c670b77a; 
+            color: #000000; 
+        }
+
+        a {
+            color: #c670b77a;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #c670b8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Post a Job</h1>
+    <form method="POST" action="/post_jobs">
+        <label for="job_title">Job Title:</label>
+        <input type="text" id="job_title" name="job_title" required>
+        <br>
+
+        <label for="job_description">Job Description:</label>
+        <textarea id="job_description" name="job_description" required></textarea>
+        <br>
+
+        <label for="job_type">Job Type:</label>
+        <select id="job_type" name="job_type" required>
+            <option value="Remote">Remote</option>
+            <option value="Onsite">Onsite</option>
+            <option value="Hybrid">Hybrid</option>
+        </select>
+        <br>
+
+        <label for="company_name">Company Name:</label>
+        <input type="text" id="company_name" name="company_name" required>
+        <br>
+
+        <label for="location">Job Location:</label>
+        <input type="text" id="location" name="location" required>
+        <br>
+
+        <input type="submit" value="Post Job">
+    </form>
+
+    <a href="{{ url_for('home') }}" class="back-button">back to Home</a>
+</body>
+</html>
